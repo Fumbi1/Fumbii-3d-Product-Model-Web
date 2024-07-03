@@ -8,7 +8,7 @@ const state = proxy({
     isLogoTexture: true, //meaining are we currently displaying the logo on ouur shirt?
     isFullTexture: false,
     logoDecal: './threejs.png',
-    fullDecal: './thtreejs.png'
+    fullDecal: './threejs.png'
 })
 
 export default state;
