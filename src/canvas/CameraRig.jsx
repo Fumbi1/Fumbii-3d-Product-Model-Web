@@ -24,13 +24,13 @@ const CameraRig = ({ children }) => {
             else targetPosition = [0, 0, 2];
         }
 
-        // set the model amera position
+        // set the model camera position
         easing.damp3(state.camera.position, targetPosition, 0.25, delta)
         
         //set the model rotation smoothly
         easing.dampE(
             group.current.rotation,
-            [state.pointer.y / 10, -state.pointer.x /5, 0],
+            [state.pointer.y / 3.75, -state.pointer.x / 1.875, 0],
             0.25,
             delta
         )
