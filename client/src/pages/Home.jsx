@@ -36,9 +36,10 @@ const Home = () => {
               {...headContentAnimation}
             >
               <p className="max-w-md font-normal text-gray-600 text-base">
-                Create your unique and exclusive shirts with our brand-new 3D
-                customization tool. <strong>Unleash your imagination</strong>{" "}
-                and define your own style.
+                Revolutionize Your Wardrobe with Our Cutting-Edge 3D Shirt
+                Designer. <strong>Transform Ideas </strong> into Wearable Art
+                and Stand Out from the Crowd. Your Style, Your Rules – Bring
+                Your Boldest Visions to Life.
               </p>
 
               <CustomButton

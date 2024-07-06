@@ -25,7 +25,7 @@ const Customizer = () => {
 
   const [generatingImg, setGeneratingImg] = useState(false);
 
-  const [activeEditorTab, setActiveEditorTab] = useState('');
+  const [activeEditorTab, setActiveEditorTab] = useState("");
 
   const [activeFilterTab, setActiveFilterTab] = useState({
     logoShirt: true,
@@ -39,18 +39,16 @@ const Customizer = () => {
       case "colorpicker":
         return <ColorPicker />;
       case "filepicker":
-        return <FilePicker 
-          file={file}
-          setFile={setFile}
-          readFile={readFile}
-        />;
+        return <FilePicker file={file} setFile={setFile} readFile={readFile} />;
       case "aipicker":
-        return <AIPicker 
-          prompt={prompt}
-          setPrompt={setPrompt}
-          generatingImg={generatingImg} // this is the loading state
-          handleSubmit={handleSubmit}
-        />;
+        return (
+          <AIPicker
+            prompt={prompt}
+            setPrompt={setPrompt}
+            generatingImg={generatingImg} // this is the loading state
+            handleSubmit={handleSubmit}
+          />
+        );
       default:
         return null;
     }
@@ -58,38 +56,70 @@ const Customizer = () => {
 
   //for the AI prompt;
   const handleSubmit = async (type) => {
-    if(!prompt) return alert("Please enter a prompt");
+    if (!prompt) return alert("Please enter a prompt");
 
     try {
       //the goal here is to call our backend to generate an ai image
+
+      setGeneratingImg(true);
+
+      const res = await fetch("http://localhost:8080/api/v1/dalle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt,
+        }),
+      });
+
+      const data = await res.json();
+
+      console.log("Server response:", data); // Log the entire response
+
+      if (!data.photo) {
+        throw new Error("Server response is missing the photo data");
+      }
+
+      const imageData = `data:image/png;base64,${data.photo}`;
+    
+      console.log("Image data length:", imageData.length);
+      console.log("First 100 characters of image data:", imageData.substring(0, 100));
+  
+      handleDecals(type, imageData);
+
     } catch (err) {
-      alert(err)
+      console.error('Error in handleSubmit:', err);
+    alert(err.message);
+
     } finally {
-      setGeneratingImg(false)
-      setActiveEditorTab("")
+      setGeneratingImg(false);
+      setActiveEditorTab("");
     }
-  }
+  };
 
   const handleDecals = (type, result) => {
     const decalType = DecalTypes[type];
 
     state[decalType.stateProperty] = result;
 
-    if(!activeFilterTab[decalType.filterTab]) {
-      handleActiveFilterTab(decalType.filterTab)
+    if (!activeFilterTab[decalType.filterTab]) {
+      handleActiveFilterTab(decalType.filterTab);
     }
-  }
+  };
 
-  const handleActiveFilterTab = (tabName)  => {
+  const handleActiveFilterTab = (tabName) => {
     switch (tabName) {
       case "logoShirt":
-          state.isLogoTexture = !activeFilterTab[tabName];
-        break
+        state.isLogoTexture = !activeFilterTab[tabName];
+        break;
       case "stylishShirt":
         state.isFullTexture = !activeFilterTab[tabName];
+        break;
       default:
         state.isLogoTexture = true;
         state.isFullTexture = false;
+        break;
     }
 
     // After the state has been set, set the activeFilterTab;
@@ -97,18 +127,17 @@ const Customizer = () => {
     setActiveFilterTab((prevState) => {
       return {
         ...prevState,
-        [tabName]: !prevState[tabName]
-      }
-    })
-  }
+        [tabName]: !prevState[tabName],
+      };
+    });
+  };
 
   const readFile = (type) => {
-    reader(file)
-    .then((result)  => {
+    reader(file).then((result) => {
       handleDecals(type, result);
-      setActiveEditorTab('')
-    })
-  }
+      setActiveEditorTab("");
+    });
+  };
 
   return (
     <AnimatePresence>
@@ -122,7 +151,13 @@ const Customizer = () => {
             <div className="flex items-center min-h-screen">
               <div className="editortabs-container">
                 {EditorTabs.map((tab) => (
-                  <Tab key={tab.name} tab={tab} handleClick={() => {setActiveEditorTab(tab.name)}} />
+                  <Tab
+                    key={tab.name}
+                    tab={tab}
+                    handleClick={() => {
+                      setActiveEditorTab(tab.name);
+                    }}
+                  />
                 ))}
 
                 {generateTabContent()}
@@ -152,7 +187,9 @@ const Customizer = () => {
                 tab={tab}
                 isFilterTab
                 isActiveTab={activeFilterTab[tab.name]}
-                handleClick={() => {handleActiveFilterTab(tab.name)}}
+                handleClick={() => {
+                  handleActiveFilterTab(tab.name);
+                }}
               />
             ))}
           </motion.div>

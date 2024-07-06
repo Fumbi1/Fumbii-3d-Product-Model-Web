@@ -4,14 +4,17 @@ export const EditorTabs = [
   {
     name: "colorpicker",
     icon: swatch,
+    ide: "Change Color"
   },
   {
     name: "filepicker",
     icon: fileIcon,
+    ide: "Add Logo"
   },
   {
     name: "aipicker",
     icon: ai,
+    ide: "Prompt AI"
   },
 ];
 
